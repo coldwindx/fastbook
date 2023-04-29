@@ -1,14 +1,41 @@
-#hide_input
-#caption  A traditional program
-#is basic_program
-#alt Pipeline inputs, program, results
-import fastbook
-from fastai.vision.all import *
-path = untar_data(URLs.CAMVID_TINY)
-dls = SegmentationDataLoaders.from_label_func(
-    path, bs=8, fnames=get_image_files(path/'images'),
-    label_func=lambda o: path/'labels'/f'{o.stem}_P{o.suffix}',
-    codes=np.loadtxt(path/'codes.txt', dtype=str)
-)
-learn = unet_learner(dls, resnet34)
-learn.fine_tune(8)
+
+#Copyright (c) Microsoft Corporation. All rights reserved.
+#Licensed under the MIT License.
+
+# -*- coding: utf-8 -*-
+
+import json
+import os 
+from pprint import pprint
+import requests
+
+'''
+This sample makes a call to the Bing Web Search API with a query and returns relevant web search.
+Documentation: https://docs.microsoft.com/en-us/bing/search-apis/bing-web-search/overview
+'''
+
+# Add your Bing Search V7 subscription key and endpoint to your environment variables.
+subscription_key = '7d9bf660942c43608a148c40b7b113b8'
+endpoint = "https://api.bing.microsoft.com/v7.0/images/search"
+
+# Query term(s) to search for. 
+query = "Microsoft"
+
+# Construct a request
+mkt = 'en-US'
+params = { 'q': query, 'mkt': mkt }
+headers = { 'Ocp-Apim-Subscription-Key': subscription_key }
+
+# Call the API
+try:
+    response = requests.get(endpoint, headers=headers, params=params)
+    response.raise_for_status()
+
+    print("Headers:")
+    print(response.headers)
+
+    print("JSON Response:")
+    pprint(response.json())
+except Exception as ex:
+    raise ex
+    
